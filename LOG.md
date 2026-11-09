@@ -26,7 +26,7 @@ End the log with your plan for what to try next.
 - changed: `train_b.py` as it came — resnet18 at 224 px, 4 epochs, batch 64, no balancing, on every photo in `data/starter/train`.
 - why: to have a valid Track B submission and a reference for later Track B changes.
 - validation: 0.4835 (seoul 0.591, busan 0.3791, tokyo 0.5986, osaka 0.3369, taipei 0.5118).
-- what it means: not answered yet.
+- what it means: b1 uses the same model, image size and augmentation as the Track A baseline, but 4 epochs is only about 177,000 photos instead of 250,000. Its score is about 0.01 below baseline, more than the 0.003 seed noise, so I think it is lower mainly because it trained on fewer photos.
 
 ## 2026-11-09 no_flip (Track A)
 
