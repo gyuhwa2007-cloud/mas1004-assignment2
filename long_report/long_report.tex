@@ -16,13 +16,19 @@
 \usepackage{mas1004}
 
 \reporttitle{Assignment 2: Long report}
-\studentname{Your name}
-\studentid{Your student ID}
+\studentname{\fillin{your name}}
+\studentid{\fillin{your student ID}}
 
 \begin{document}
 \makeheader
 
-\fillin{Your leaderboard nickname, and the tags of your last Track A and Track B releases.}
+Leaderboard nickname: \fillin{your nickname}. My last release of each track is
+\texttt{track-a-1} (Track A: the starter recipe on all training photos, from
+commit \texttt{ff34d66}) and \texttt{track-b-1} (Track B: the model called b1).
+The leaderboard scores next to my validation scores are a note for tomorrow:
+\fillin{the leaderboard score of \texttt{track-a-1} and of \texttt{track-b-1}
+next to the validation scores 0.4942 / 0.4971 (Track A) and 0.4835 (Track B),
+read from the leaderboard in the morning --- not written yet}.
 
 % The sections below are a suggestion. Change, merge or add sections as you
 % like; README.md, "The long report", says what a reader should be able to see.
@@ -31,54 +37,182 @@
 \section*{Track A}
 
 \begin{center}\footnotesize
-\begin{tabular}{lp{0.6\linewidth}r}
+\begin{tabular}{lp{0.55\linewidth}r}
 \toprule
 tag & what changed from the run before & validation \\
 \midrule
-\multicolumn{3}{l}{\fillin{one row per recipe, with the numbers from experiments.csv}} \\
+\texttt{baseline}, seed 0 & nothing: the starter recipe on all 44,257 training photos & 0.4942 \\
+\texttt{baseline}, seed 1 & the same recipe and the same photos; only the seed changed & 0.4971 \\
+\texttt{no\_flip}, seed 0 & the left-right flip removed from \texttt{train\_transform} & 0.4926 \\
+\texttt{drop\_nonstreet}, seed 0 & the flip back, so the recipe is the starter recipe again, on a selection of 44,172 photos instead of 44,257: 85 dropped as not a street scene & 0.4891 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-\fillin{What you tried, why, and what you think each result means.}
+Every number in that table is from \texttt{experiments.csv}, which is printed in
+full under ``All runs''. All four runs went through \texttt{src/official.py} with
+\texttt{rules.TRACK\_A\_BUDGET}, 249,984 photos each, on Colab's GPU.
 
-\fillin{Your final recipe and selection, and their leaderboard score next to
-their validation score.}
+\textbf{Why I made each change, and what I think the result means} (my own words,
+from \texttt{LOG.md}):
+
+\textbf{baseline, seeds 0 and 1.} Why: to have a reference, and to see how much
+the score moves by chance when only the seed changes. What it means: the two
+seeds differ by about 0.003, so a change has to move the score by more than that
+before I believe it.
+
+\textbf{no\_flip.} Why: a flip turns signs into mirror writing and puts traffic
+on the wrong side, and Japan drives on the left while Korea and Taiwan drive on
+the right, so I thought it destroys clues. What it means: 0.4926 is within the
+seed noise of baseline, so removing the flip did not help; maybe signs and
+traffic direction are a small part of most photos.
+
+\textbf{drop\_nonstreet.} Why: my rule, written before I chose which photos to
+look at --- drop training photos you could not see while walking a street:
+nature only, inside a room (museum, restaurant, office), exhibits, food, maps, a
+plane in the sky; keep walkable covered spaces such as shopping arcades,
+underground malls and stations; street photos that are just hard to tell from
+another city stay in. What it means: as I predicted, removing 85 photos
+(0.2\%) did not help. It came out about 0.005 below baseline, but with only one
+seed and per-city swings of 0.02--0.04 between seeds, I cannot tell whether that
+is a real drop or noise. To see a real effect I would have to apply the rule to
+all training photos, not only the 48 most doubtful per city.
+
+\textbf{My final recipe and selection.} The recipe is the starter recipe: in
+\texttt{experiments.csv} the recipe hash of \texttt{drop\_nonstreet}
+(\texttt{17ac485223fa}) is the same as both \texttt{baseline} runs, because the
+left-right flip is back and nothing else in \texttt{track\_a/recipe.py} differs.
+The selection is \texttt{track\_a/selection.csv}, 44,172 of the 44,257 training
+photos, which validated at 0.4891. The run that is actually released is
+\texttt{track-a-1}, the starter recipe on all training photos, with validation
+0.4942 (seed 0) and 0.4971 (seed 1). Its leaderboard score next to those two
+numbers: \fillin{to be filled in from tomorrow's leaderboard --- not written
+yet}.
 
 % ---------------------------------------------------------------------------
 \section*{Decisions you made from photos}
 
-\picturefile{figures/mistakes_baseline_seed0_busan_00.png}
+Two kinds of sheets were drawn from the \texttt{baseline} seed 0 model on Colab,
+both numbered so that a photo can be named by its sheet and its number:
+\texttt{curate.py mistakes} (\texttt{-{}-every 2}, 6,039 validation photos scored,
+showing the ones the model got wrong most confidently) and
+\texttt{curate.py suspects} (\texttt{-{}-every 4}, 11,065 training photos scored,
+showing the 48 photos per city with the lowest probability for their own city).
+All the counts in this section are from those two runs' output in
+\texttt{results/colab\_logs/}.
 
-\fillin{What you looked at, what you saw in common, and the rule you wrote
-before acting.}
+\picturefile[0.82\linewidth]{figures/mistakes_baseline_seed0_busan_00.jpg}
 
-\fillin{What you changed (the output of curate.py count, or the photos you
-added), and the scores before and after.}
+\begin{center}\footnotesize
+Busan, \texttt{mistakes} sheet: the 48 validation photos baseline seed 0 got
+wrong most confidently. Of the 695 Busan validation photos read with
+\texttt{-{}-every 2}, 430 were wrong.
+\end{center}
 
-\fillin{The requests you gave your agent for these decisions.}
+\sidebyside{figures/suspects_baseline_seed0_busan_00.jpg}{Busan,
+\texttt{suspects} sheet: the 48 Busan training photos with the lowest Busan
+probability. I dropped 24 of the 48 on this sheet.}
+{figures/suspects_baseline_seed0_tokyo_00.jpg}{Tokyo, \texttt{suspects} sheet:
+the same for Tokyo. I dropped 22 of the 48 on this sheet.}
+
+\textbf{The rule I wrote before choosing which photos to drop.} Drop training
+photos you could not see while walking a street --- nature only, inside a room
+(museum, restaurant, office), exhibits, food, maps, a plane in the sky. Keep
+walkable covered spaces such as shopping arcades, underground malls and
+stations. Street photos that are just hard to tell from another city stay in.
+
+I applied that rule to the five \texttt{suspects} sheets of \texttt{baseline}
+seed 0: osaka, tokyo, seoul, busan and taipei.
+
+\textbf{What it changed.} 85 photos left the selection (osaka 14, tokyo 22,
+seoul 12, busan 24, taipei 13, which is the difference between the two columns
+of the count below), so \texttt{track\_a/selection.csv} went from
+44,257 rows to 44,172 rows. Every dropped photo and the reason are in
+\texttt{track\_a/dropped.csv}. The photos are not deleted, only left out, so
+\texttt{curate.py undrop} can put any of them back. The scores before and after:
+0.4942 (baseline, seed 0) and 0.4971 (baseline, seed 1) before, 0.4891 after,
+with the same recipe. The output of \texttt{curate.py count} on the new
+selection:
+
+\outputfile{outputs/curate_count.txt}
+
+\textbf{The requests I gave my agent for these decisions} (step 7 of my work
+with it, copied exactly as I sent it):
+
+\begin{Verbatim}[breaklines,breakanywhere,fontsize=\footnotesize,frame=single]
+My rule, written before choosing: drop training photos you could not see while walking a street — nature only, inside a room (museum, restaurant, office), exhibits, food, maps, a plane in the sky. Keep walkable covered spaces such as shopping arcades, underground malls and stations. Street photos that are just hard to tell from another city stay in. I applied it to all five suspect sheets of baseline seed 0.
+
+Drop photos 1, 6, 10, 11, 20, 33, 34, 36, 37, 39, 41, 46, 47, 48 from suspects_baseline_seed0_osaka_00, reason "not a street scene".
+Drop photos 1, 6, 8, 9, 12, 13, 14, 16, 17, 18, 26, 28, 30, 31, 32, 34, 38, 39, 42, 43, 45, 46 from suspects_baseline_seed0_tokyo_00, reason "not a street scene".
+Drop photos 4, 12, 14, 20, 21, 30, 36, 37, 39, 41, 43, 45 from suspects_baseline_seed0_seoul_00, reason "not a street scene".
+Drop photos 1, 2, 6, 7, 8, 10, 12, 17, 21, 24, 26, 27, 29, 30, 33, 35, 37, 38, 39, 44, 45, 46, 47, 48 from suspects_baseline_seed0_busan_00, reason "not a street scene".
+Drop photos 1, 2, 4, 10, 11, 14, 15, 19, 21, 32, 38, 47, 48 from suspects_baseline_seed0_taipei_00, reason "not a street scene".
+
+Then put the left-right flip back in track_a/recipe.py so the recipe is the same as baseline, change nothing else, and show me the diff. Train the new selection on Colab with the tag drop_nonstreet, and tell me when to press Run all.
+\end{Verbatim}
 
 % ---------------------------------------------------------------------------
 \section*{Track B}
 
-\fillin{What you tried, one step at a time, and the validation score after
-each step.}
+\textbf{b1, the first step.} \texttt{train\_b.py} as it came: \texttt{resnet18}
+with its ImageNet weights, 224 px, 4 epochs, batch 64, no balancing, on every
+photo in \texttt{data/starter/train}, submitted with \texttt{-{}-submit}. It
+validated at 0.4835 (seoul 0.591, busan 0.3791, tokyo 0.5986, osaka 0.3369,
+taipei 0.5118) after 176,896 photos through the network, from the b1 row of
+\texttt{experiments.csv}; the run's own output is in
+\texttt{results/colab\_logs/}.
 
-\fillin{How you collected any extra photos.}
+Why: to have a valid Track B submission and a reference for later Track B
+changes. What it means: b1 uses the same model, image size and augmentation as
+the Track A baseline, but 4 epochs is only about 177,000 photos instead of
+250,000. Its score is about 0.01 below baseline, more than the 0.003 seed noise,
+so I think it is lower mainly because it trained on fewer photos.
 
-\fillin{Your validation score next to your leaderboard score, and why they
-might disagree.}
+\textbf{b2 did not run.} The next step was the same file with 6 epochs instead
+of 4 --- \texttt{python src/train\_b.py -{}-tag b2 -{}-epochs 6 -{}-submit} followed
+by \texttt{python src/check\_submission.py -{}-no-val}, queued in
+\texttt{colab\_runs.txt}. The run never started: the free Colab GPU limit was
+reached, so Colab would not give me a GPU that day. There is therefore no b2 row
+in \texttt{experiments.csv}, no b2 validation score, and \texttt{submission/}
+still holds b1. Nothing else about b2 was changed: \texttt{train\_b.py} is
+identical to the file b1 used, and 6 epochs instead of 4 is the only difference.
+
+\textbf{Extra photos.} None. Both Track B runs used only
+\texttt{data/starter/train}, so there was nothing to collect from a phone or put
+in Google Drive.
+
+\textbf{My validation score next to my leaderboard score.} b1 validated at
+0.4835, and \texttt{track-b-1} is the released model.
+\fillin{its leaderboard score next to 0.4835, and why the two might disagree, in
+my own words --- to be read from the leaderboard tomorrow and written then}.
 
 \subsection*{Your submission, as the grader sees it}
 \outputfile{outputs/check_submission.txt}
 
+The description of the model that \texttt{train\_b.py} wrote next to it, in
+\texttt{submission/submission.json}:
+
+\outputfile{outputs/submission.json}
+
 % ---------------------------------------------------------------------------
 \section*{What made the difference}
 
-\fillin{Which change helped most and which least, in both tracks, with your
-numbers.}
+Neither Track A change I measured beat the baseline. With the starter recipe on
+all training photos the score was 0.4942 (seed 0) and 0.4971 (seed 1); removing
+the left-right flip gave 0.4926, and taking the 85 non-street photos out of the
+selection gave 0.4891. Track B never got past its reference run: b1 validated at
+0.4835 on 176,896 photos, and b2, the same file with 6 epochs, could not run
+because the free Colab GPU limit was reached. Every number here is a
+\texttt{validation} value from \texttt{experiments.csv}.
 
-\fillin{What you would do next with one more week.}
+\fillin{Which change helped most and which least, in my own words, and what I
+would do next with one more week --- not written yet.}
+
+My plan for Track A, from \texttt{LOG.md}, is to apply the photo rule to all
+training photos, not only the 48 most doubtful per city, because 85 photos out
+of 44,257 was too small a change to see through the seed noise. The 6-epoch
+Track B run for b2 is still queued in \texttt{colab\_runs.txt} and has not run
+yet.
 
 % ---------------------------------------------------------------------------
 \section*{All runs}
