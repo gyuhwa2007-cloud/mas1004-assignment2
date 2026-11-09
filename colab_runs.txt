@@ -1,6 +1,5 @@
-# One Colab session: the starter recipe twice (seeds 0 and 1), then the Track B
-# model as it comes, made into the submission, and its format and limit checks.
-python src/official.py --tag baseline
-python src/official.py --tag baseline --seed 1
-python src/train_b.py --tag b1 --submit
-python src/check_submission.py --no-val
+# One Colab session: what baseline seed 0 gets wrong and where it is unsure,
+# then the starter recipe with the left-right flip taken out.
+python src/curate.py mistakes results/baseline_seed0/model.onnx --every 2
+python src/curate.py suspects results/baseline_seed0/model.onnx --every 4
+python src/official.py --tag no_flip
