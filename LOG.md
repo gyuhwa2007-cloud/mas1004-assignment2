@@ -41,4 +41,8 @@ End the log with your plan for what to try next.
 - why: my rule, written before I chose which photos to look at: drop training photos you could not see while walking a street — nature only, inside a room (museum, restaurant, office), exhibits, food, maps, a plane in the sky. Keep walkable covered spaces such as shopping arcades, underground malls and stations. Street photos that are just hard to tell from another city stay in.
 - expected before seeing the result: little or no change, because 85 photos are only about 0.2% of the training set, and I only looked at the 48 most doubtful photos per city from every fourth training photo.
 - validation: 0.4891 (before: 0.4942 and 0.4971 from baseline seeds 0 and 1); seoul 0.5815, busan 0.3799, tokyo 0.6236, osaka 0.3477, taipei 0.5127.
-- what it means: not answered yet.
+- what it means: as I predicted, removing 85 photos (0.2%) did not help. It came out about 0.005 below baseline, but with only one seed and per-city swings of 0.02-0.04 between seeds, I cannot tell whether that is a real drop or noise. To see a real effect I would have to apply the rule to all training photos, not only the 48 most doubtful per city.
+
+## Plan
+
+- drop_nonstreet: apply the rule to all training photos, not only the 48 most doubtful per city.
