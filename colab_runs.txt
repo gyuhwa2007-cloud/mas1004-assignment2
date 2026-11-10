@@ -1,5 +1,6 @@
-# One Colab session: train_b.py as it came, with 6 epochs instead of 4, and the
-# model submitted as b2. The format check skips the validation photos because
-# train_b.py prints that score itself.
+# One Colab session: the starter recipe on a random half of the training photos
+# (tag half), then train_b.py as it came with 6 epochs for b2, then the format
+# check, which skips the validation photos because train_b.py prints that score.
+python src/official.py --tag half
 python src/train_b.py --tag b2 --epochs 6 --submit
 python src/check_submission.py --no-val
