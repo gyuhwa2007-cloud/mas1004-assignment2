@@ -91,8 +91,10 @@ from \texttt{LOG.md}):
 
 \textbf{baseline, seeds 0 and 1.} Why: to have a reference, and to see how much
 the score moves by chance when only the seed changes. What it means: the two
-seeds differ by about 0.003, so a change has to move the score by more than that
-before I believe it.
+seeds differ by about 0.003 (0.4942 and 0.4971). But 0.003 comes from only two
+seeds, so it is a weak estimate of the noise; per city the two seeds differ by
+up to 0.045 (osaka). So I treat differences of about 0.005 as possibly noise,
+not as proof.
 
 \textbf{no\_flip.} Why: a flip turns signs into mirror writing and puts traffic
 on the wrong side, and Japan drives on the left while Korea and Taiwan drive on
@@ -106,21 +108,30 @@ nature only, inside a room (museum, restaurant, office), exhibits, food, maps, a
 plane in the sky; keep walkable covered spaces such as shopping arcades,
 underground malls and stations; street photos that are just hard to tell from
 another city stay in. What it means: as I predicted, removing 85 photos
-(0.2\%) did not help. It came out about 0.005 below baseline, but with only one
-seed and per-city swings of 0.02--0.04 between seeds, I cannot tell whether that
-is a real drop or noise. To see a real effect I would have to apply the rule to
-all training photos, not only the 48 most doubtful per city.
+(0.2\%) did not help. It came out 0.0051 below baseline seed 0 and 0.0080 below
+seed 1, but with only one seed for this selection and per-city swings of up to
+0.045 between the two baseline seeds, a difference of about 0.005 is the size
+that I said above I treat as possibly noise, not as proof of a drop. To see a
+real effect I would have to apply the rule to all training photos, not only the
+48 most doubtful per city.
 
 \textbf{My final recipe and selection.} The recipe is the starter recipe: in
 \texttt{experiments.csv} the recipe hash of \texttt{drop\_nonstreet}
 (\texttt{17ac485223fa}) is the same as both \texttt{baseline} runs, because the
 left-right flip is back and nothing else in \texttt{track\_a/recipe.py} differs.
-The selection is \texttt{track\_a/selection.csv}, 44,172 of the 44,257 training
-photos, which validated at 0.4891. The run that is actually released is
-\texttt{track-a-1}, the starter recipe on all training photos, with validation
-0.4942 (seed 0) and 0.4971 (seed 1). Its leaderboard score next to those two
-numbers: \fillin{to be filled in from tomorrow's leaderboard --- not written
-yet}.
+The selection that \texttt{drop\_nonstreet} used was 44,172 of the 44,257
+training photos, and it validated at 0.4891. What I submit for Track A is not
+that selection and not the \texttt{track\_a/selection.csv} that the repository
+holds now: my Track A submission is the release \texttt{track-a-1}, the starter
+recipe on all 44,257 training photos, validated at 0.4942 (seed 0) and 0.4971
+(seed 1). The commit that trained \texttt{baseline} (\texttt{1c3f89d}) and the
+commit of the release (\texttt{ff34d66}) are different even though the recipe is
+the same file in both, because \texttt{1c3f89d} only queued the runs: the scores
+existed only after the Colab session, so \texttt{ff34d66} is the later commit
+that added the two baseline rows and the Track B submission to
+\texttt{experiments.csv}, and \texttt{track-a-1} was released from it. Its
+leaderboard score next to those two numbers: \fillin{to be filled in from
+tomorrow's leaderboard --- not written yet}.
 
 % ---------------------------------------------------------------------------
 \section*{Decisions you made from photos}
@@ -198,8 +209,10 @@ taipei 0.5118) after 176,896 photos through the network, from the b1 row of
 Why: to have a valid Track B submission and a reference for later Track B
 changes. What it means: b1 uses the same model, image size and augmentation as
 the Track A baseline, but 4 epochs is only about 177,000 photos instead of
-250,000. Its score is about 0.01 below baseline, more than the 0.003 seed noise,
-so I think it is lower mainly because it trained on fewer photos.
+250,000. Its score is 0.0107 below baseline seed 0 and 0.0136 below seed 1,
+about twice the 0.005 that I treat above as possibly noise, so I think it is
+lower mainly because it trained on fewer photos; with one run of each I take
+that as likely rather than proved.
 
 \textbf{b2 did not run.} The next step was the same file with 6 epochs instead
 of 4 --- \texttt{python src/train\_b.py -{}-tag b2 -{}-epochs 6 -{}-submit} followed
@@ -210,9 +223,9 @@ in \texttt{experiments.csv}, no b2 validation score, and \texttt{submission/}
 still holds b1. Nothing else about b2 was changed: \texttt{train\_b.py} is
 identical to the file b1 used, and 6 epochs instead of 4 is the only difference.
 
-\textbf{Extra photos.} None. Both Track B runs used only
-\texttt{data/starter/train}, so there was nothing to collect from a phone or put
-in Google Drive.
+\textbf{Extra photos.} None. Only b1 ran --- b2 never started --- and it used
+only \texttt{data/starter/train}, so there was nothing to collect from a phone
+or put in Google Drive.
 
 \textbf{My validation score next to my leaderboard score.} b1 validated at
 0.4835, and \texttt{track-b-1} is the released model.
