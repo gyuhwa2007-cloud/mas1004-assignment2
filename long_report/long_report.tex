@@ -46,9 +46,7 @@ be told apart from Seoul.
 
 \textbf{Osaka.} In Osaka too, you could tell it is Japanese by looking at
 things like inns. But the coast or the sea --- if you know the Japanese feel
-you can tell, but in fact I think it is hard to tell apart from Busan. And
-there are really a lot of strange natural things. I do not really know why
-either.
+you can tell, but in fact I think it is hard to tell apart from Busan.
 
 \textbf{Seoul.} Seoul, as befits the capital of the Joseon Dynasty long ago,
 does seem to have many cultural sites. There are many scenes of Gyeongbokgung,
@@ -58,13 +56,42 @@ and many people wearing traditional clothing.
 but there are also many parts where I cannot really tell which area of Osaka it
 is.
 
-\textbf{Taipei.} Taipei looks different from our East Asia, but I do not know
-what to call it.
+\textbf{Taipei.} It looks different from both Korea and Japan, but I could not
+say how.
+
+\textbf{All five cities.} In the training photos in general there are really a
+lot of strange natural things. I do not really know why either. That is why I
+later wrote the \texttt{drop\_nonstreet} rule --- drop training photos you could
+not see while walking a street --- so that these nature-only photos would be
+left out.
 
 Busan and Osaka are the two cities with the lowest per-city scores in every run:
 in the baseline (seed 0) they are 0.3914 and 0.3228, and in Track B's b1 they
-are 0.3791 and 0.3369. That goes with what I wrote above, where I found Busan
-and Osaka hard to tell apart.
+are 0.3791 and 0.3369. The two mistake sheets of baseline seed 0, which hold the
+48 validation photos that the model got wrong most confidently, say where those
+photos were sent instead. I counted the answers on the two sheets,
+\texttt{mistakes\_baseline\_seed0\_busan\_00} and
+\texttt{mistakes\_baseline\_seed0\_osaka\_00}, from the \texttt{.csv} that comes
+with each sheet, without scoring anything again:
+
+\begin{center}\footnotesize
+\begin{tabular}{lp{0.5\linewidth}}
+\toprule
+the 48 photos on the sheet & what the model answered \\
+\midrule
+wrong Busan photos & seoul 32, tokyo 10, taipei 5, osaka 1 \\
+wrong Osaka photos & tokyo 42, seoul 4, taipei 2, busan 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+So my notes are only half right. I wrote that Busan cannot be told apart from
+Seoul, and 32 of the 48 wrong Busan photos were answered Seoul. I also wrote
+that Osaka is hard to tell apart from Busan, but not one of the 48 wrong Osaka
+photos was answered Busan: 42 of them were answered Tokyo. Since a mistake sheet
+holds only the mistakes the model was most sure about, these counts say no more
+than this: the model sends the two weakest cities to the big city of their own
+country, Seoul for Busan and Tokyo for Osaka, and not to each other.
 
 % ---------------------------------------------------------------------------
 \section*{Track A}
