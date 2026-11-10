@@ -25,10 +25,8 @@
 Leaderboard nickname: yosam. My last release of each track is
 \texttt{track-a-1} (Track A: the starter recipe on all training photos, from
 commit \texttt{ff34d66}) and \texttt{track-b-1} (Track B: the model called b1).
-The leaderboard scores next to my validation scores are a note for tomorrow:
-\fillin{the leaderboard score of \texttt{track-a-1} and of \texttt{track-b-1}
-next to the validation scores 0.4942 / 0.4971 (Track A) and 0.4835 (Track B),
-read from the leaderboard in the morning --- not written yet}.
+Neither release was scored on the leaderboard before the deadline, and the two
+sections below say what I know about it.
 
 % The sections below are a suggestion. Change, merge or add sections as you
 % like; README.md, "The long report", says what a reader should be able to see.
@@ -169,9 +167,11 @@ commit of the release (\texttt{ff34d66}) are different even though the recipe is
 the same file in both, because \texttt{1c3f89d} only queued the runs: the scores
 existed only after the Colab session, so \texttt{ff34d66} is the later commit
 that added the two baseline rows and the Track B submission to
-\texttt{experiments.csv}, and \texttt{track-a-1} was released from it. Its
-leaderboard score next to those two numbers: \fillin{to be filled in from
-tomorrow's leaderboard --- not written yet}.
+\texttt{experiments.csv}, and \texttt{track-a-1} was released from it.
+\texttt{track-a-1} was not scored on the leaderboard before the deadline; the
+leaderboard was last updated on 9 Nov at 02:41, before my first release. Another
+student submitted the same starter recipe and got 0.409 on the leaderboard
+against 0.501 on validation.
 
 % ---------------------------------------------------------------------------
 \section*{Decisions you made from photos}
@@ -268,9 +268,11 @@ only \texttt{data/starter/train}, so there was nothing to collect from a phone
 or put in Google Drive.
 
 \textbf{My validation score next to my leaderboard score.} b1 validated at
-0.4835, and \texttt{track-b-1} is the released model.
-\fillin{its leaderboard score next to 0.4835, and why the two might disagree, in
-my own words --- to be read from the leaderboard tomorrow and written then}.
+0.4835, and \texttt{track-b-1} is the released model, but \texttt{track-b-1} was
+not scored on the leaderboard before the deadline either. On the leaderboard
+every student's score is about 0.08 to 0.09 lower than their validation score. I
+think this is because the leaderboard photos are frames from YouTube walking and
+driving videos, which look different from the validation photos.
 
 \subsection*{Your submission, as the grader sees it}
 \outputfile{outputs/check_submission.txt}
