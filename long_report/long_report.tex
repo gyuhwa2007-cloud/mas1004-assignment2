@@ -105,13 +105,16 @@ tag & what changed from the run before & validation \\
 \texttt{baseline}, seed 1 & the same recipe and the same photos; only the seed changed & 0.4971 \\
 \texttt{no\_flip}, seed 0 & the left-right flip removed from \texttt{train\_transform} & 0.4926 \\
 \texttt{drop\_nonstreet}, seed 0 & the flip back, so the recipe is the starter recipe again, on a selection of 44,172 photos instead of 44,257: 85 dropped as not a street scene & 0.4891 \\
+\texttt{half}, seed 0 & the starter recipe on a random half of that selection: 22,088 photos instead of 44,172, the 85 dropped ones still out, and the same 249,984 photos through the network, so each photo was seen about 11 times instead of about 6 & 0.4798 \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 Every number in that table is from \texttt{experiments.csv}, which is printed in
-full under ``All runs''. All four runs went through \texttt{src/official.py} with
-\texttt{rules.TRACK\_A\_BUDGET}, 249,984 photos each, on Colab's GPU.
+full under ``All runs''. All five runs went through \texttt{src/official.py} with
+\texttt{rules.TRACK\_A\_BUDGET}, 249,984 photos each. Four of them ran on Colab's
+GPU; \texttt{half} ran on this computer's CPU and took 192.5 minutes, where the
+same 249,984 photos took 2,262.5 seconds in \texttt{baseline} seed 0.
 
 \textbf{Why I made each change, and what I think the result means} (my own words,
 from \texttt{LOG.md}):
@@ -142,6 +145,15 @@ that I said above I treat as possibly noise, not as proof of a drop. To see a
 real effect I would have to apply the rule to all training photos, not only the
 48 most doubtful per city.
 
+\textbf{half.} Why: to see whether the amount of training photos matters,
+without collecting new photos: if half the photos gives a much lower score, more
+photos would probably help. What it means: \texttt{half} scored 0.4798, about
+0.015 below baseline (0.0144 below seed 0 and 0.0173 below seed 1) and about
+three times the 0.005 that I treat as possible noise, so I think the amount of
+photos really matters, and collecting more photos is the most promising next
+step. Caveats: one seed only, and this run used the CPU while baseline used
+Colab's GPU.
+
 \textbf{My final recipe and selection.} The recipe is the starter recipe: in
 \texttt{experiments.csv} the recipe hash of \texttt{drop\_nonstreet}
 (\texttt{17ac485223fa}) is the same as both \texttt{baseline} runs, because the
@@ -149,7 +161,8 @@ left-right flip is back and nothing else in \texttt{track\_a/recipe.py} differs.
 The selection that \texttt{drop\_nonstreet} used was 44,172 of the 44,257
 training photos, and it validated at 0.4891. What I submit for Track A is not
 that selection and not the \texttt{track\_a/selection.csv} that the repository
-holds now: my Track A submission is the release \texttt{track-a-1}, the starter
+holds now (the 22,088-row half selection that \texttt{half} used): my Track A
+submission is the release \texttt{track-a-1}, the starter
 recipe on all 44,257 training photos, validated at 0.4942 (seed 0) and 0.4971
 (seed 1). The commit that trained \texttt{baseline} (\texttt{1c3f89d}) and the
 commit of the release (\texttt{ff34d66}) are different even though the recipe is
@@ -270,22 +283,25 @@ The description of the model that \texttt{train\_b.py} wrote next to it, in
 % ---------------------------------------------------------------------------
 \section*{What made the difference}
 
-Neither Track A change I measured beat the baseline. With the starter recipe on
-all training photos the score was 0.4942 (seed 0) and 0.4971 (seed 1); removing
-the left-right flip gave 0.4926, and taking the 85 non-street photos out of the
-selection gave 0.4891. Track B never got past its reference run: b1 validated at
-0.4835 on 176,896 photos, and b2, the same file with 6 epochs, could not run
-because the free Colab GPU limit was reached. Every number here is a
-\texttt{validation} value from \texttt{experiments.csv}.
+Only one change I measured moved the score, and it was in the wrong direction.
+With the starter recipe on all training photos the score was 0.4942 (seed 0) and
+0.4971 (seed 1); removing the left-right flip gave 0.4926, taking the 85
+non-street photos out of the selection gave 0.4891, and cutting the training
+photos in half gave 0.4798, which is 0.0144 below seed 0 and 0.0173 below seed 1.
+Track B never got past its reference run: b1 validated at 0.4835 on 176,896
+photos, and b2, the same file with 6 epochs, could not run because the free
+Colab GPU limit was reached. Every number here is a \texttt{validation} value
+from \texttt{experiments.csv}.
 
-\fillin{Which change helped most and which least, in my own words, and what I
-would do next with one more week --- not written yet.}
+This is the change that made the biggest difference, in the wrong direction:
+flip and cleaning changed nothing measurable, the amount of data did.
 
-My plan for Track A, from \texttt{LOG.md}, is to apply the photo rule to all
-training photos, not only the 48 most doubtful per city, because 85 photos out
-of 44,257 was too small a change to see through the seed noise. The 6-epoch
-Track B run for b2 is still queued in \texttt{colab\_runs.txt} and has not run
-yet.
+My plan for Track A, from \texttt{LOG.md}, is to collect more photos: the amount
+of training photos is the one thing that moved the score, so collecting more
+photos is the most promising next step. The photo rule applied to all training
+photos, not only the 48 most doubtful per city, is the change I have still not
+made. The 6-epoch Track B run for b2 is still queued in \texttt{colab\_runs.txt}
+and has not run yet.
 
 % ---------------------------------------------------------------------------
 \section*{All runs}

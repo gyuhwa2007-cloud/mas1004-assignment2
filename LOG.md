@@ -43,6 +43,15 @@ End the log with your plan for what to try next.
 - validation: 0.4891 (before: 0.4942 and 0.4971 from baseline seeds 0 and 1); seoul 0.5815, busan 0.3799, tokyo 0.6236, osaka 0.3477, taipei 0.5127.
 - what it means: as I predicted, removing 85 photos (0.2%) did not help. It came out about 0.005 below baseline, but with only one seed and per-city swings of 0.02-0.04 between seeds, I cannot tell whether that is a real drop or noise. To see a real effect I would have to apply the rule to all training photos, not only the 48 most doubtful per city.
 
+## 2026-11-10 half (Track A)
+
+- changed: the starter recipe unchanged (the recipe hash `17ac485223fa` is still the same as baseline), but on a random half of the photos: `scripts/make_selection.py` seeded 0 kept half of every city's training photos and left the 85 already-dropped photos out, so `selection.csv` went from 44,172 rows to 22,088 rows (seoul 5632, busan 2581, tokyo 6670, osaka 3590, taipei 3615). The budget is still 249,984 photos through the network, so each photo was seen about 11 times instead of about 6. This run took the CPU of this computer, not Colab's GPU.
+- why: to see whether the amount of training photos matters, without collecting new photos: if half the photos gives a much lower score, more photos would probably help.
+- validation: 0.4798 (before: 0.4942 and 0.4971 from baseline seeds 0 and 1); seoul 0.5906, busan 0.377, tokyo 0.5826, osaka 0.3463, taipei 0.5025.
+- what it means: half scored about 0.015 below baseline, about three times the 0.005 that I treat as possible noise, so I think the amount of photos really matters, and collecting more photos is the most promising next step. Caveats: one seed only, and this run used the CPU while baseline used Colab's GPU.
+- biggest difference: this is the change that made the biggest difference, in the wrong direction: flip and cleaning changed nothing measurable, the amount of data did.
+
 ## Plan
 
+- half: collecting more photos is the most promising next step, because the amount of training photos is the one thing that moved the score.
 - drop_nonstreet: apply the rule to all training photos, not only the 48 most doubtful per city.
